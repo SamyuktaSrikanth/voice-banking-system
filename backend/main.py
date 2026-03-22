@@ -7,7 +7,34 @@ from db import SessionLocal
 from auth import authenticate_user, hash_password
 from models import User
 
+from fastapi import UploadFile, File
+from voice.stt import speech_to_text
+from translation.translate import translate_to_english
+
+
 app = FastAPI()
+
+
+@app.post("/voice-command")
+async def process_voice(file: UploadFile = File(...)):
+    
+    # Save file
+    file_path = "temp_command.wav"
+    with open(file_path, "wb") as f:
+        f.write(await file.read())
+
+    # STEP 1: STT
+    text, language = speech_to_text(file_path)
+
+    # STEP 2: Translation
+    translated = translate_to_english(text)
+
+    return {
+        "original_text": text,
+        "language": language,
+        "translated_text": translated,
+        "response": "Processed successfully"
+    }
 
 @app.post("/signup")
 async def signup(
