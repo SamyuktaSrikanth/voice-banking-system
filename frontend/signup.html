@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Signup</title>
+    <script>
+
+let mediaRecorder;
+let audioChunks = [];
+document.getElementById("status").innerText = "Recording...";
+
+function toggleVoiceUpload(checkbox) {
+    const voiceSection = document.getElementById("voiceSection");
+    const submitBtn = document.getElementById("submitBtn");
+
+    if (checkbox.checked) {
+        voiceSection.style.display = "block";
+        submitBtn.disabled = false;
+    } else {
+        voiceSection.style.display = "none";
+        submitBtn.disabled = true;
+    }
+}
+
+        async function startRecording() {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaRecorder = new MediaRecorder(stream);
+
+            audioChunks = [];
+
+            mediaRecorder.ondataavailable = event => {
+                audioChunks.push(event.data);
+            };
+
+            mediaRecorder.onstop = () => {
+                const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
+
+                const fileInput = document.getElementById("audioFile");
+                const file = new File([audioBlob], "voice.webm");
+
+                const container = new DataTransfer();
+                container.items.add(file);
+                fileInput.files = container.files;
+            };
+
+            mediaRecorder.start();
+        }
+
+        function stopRecording() {
+            mediaRecorder.stop();
+            mediaRecorder.stream.getTracks().forEach(track => track.stop());
+        }
+</script>
+</head>
+<body>
+
+<h2>Create Account</h2>
+
+<form action="http://127.0.0.1:8000/signup" method="post" enctype="multipart/form-data">
+
+    <label>Customer ID:</label><br>
+    <input type="text" name="customer_id" required><br><br>
+
+    <label>Password:</label><br>
+    <input type="password" name="password" required><br><br>
+
+    <!-- ✅ Checkbox -->
+    <input type="checkbox" onchange="toggleVoiceUpload(this)">
+    Agree to proceed with voice-based banking interface
+    <br><br>
+
+    <!-- Hidden voice -->
+    <div id="voiceSection" style="display:none;">
+        <label>Voice Captcha:</label><br><br>
+
+        <button type="button" onclick="startRecording()">🎤 Start Recording</button>
+        <button type="button" onclick="stopRecording()">⏹ Stop</button>
+
+        <br><br>
+
+        <!-- Hidden file input -->
+        <input type="file" id="audioFile" name="file" style="display:none;">
+    </div>
+
+    <p id="status"></p>
+
+    <!-- 🔒 Disabled button -->
+    <button type="submit" id="submitBtn" disabled>Signup</button>
+
+</form>
+
+<br>
+
+<!-- 🔗 LINK TO LOGIN PAGE -->
+<p>
+    Already have an account?
+    <a href="login.html">Login here</a>
+</p>
+
+</body>
+</html>
