@@ -49,13 +49,33 @@ function toggleVoiceUpload(checkbox) {
             mediaRecorder.stop();
             mediaRecorder.stream.getTracks().forEach(track => track.stop());
         }
+
+        document.getElementById("signupForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    const formData = new FormData(this);
+
+    const res = await fetch("http://127.0.0.1:8000/signup", {
+        method: "POST",
+        body: formData
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+        alert("Signup successful!");
+        window.location.href = "login.html";  // ✅ redirect to login
+    } else {
+        alert(data.detail);
+    }
+});
 </script>
 </head>
 <body>
 
 <h2>Create Account</h2>
 
-<form action="http://127.0.0.1:8000/signup" method="post" enctype="multipart/form-data">
+<form action="http://127.0.0.1:8000/signup" id="signupForm" method="post" enctype="multipart/form-data">
 
     <label>Customer ID:</label><br>
     <input type="text" name="customer_id" required><br><br>

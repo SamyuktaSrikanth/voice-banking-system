@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Voice Banking Dashboard</title>
+</head>
+<body>
+
+<h2>🎤 Voice Banking Dashboard</h2>
+
+<button onclick="startRecording()">Start Voice Command</button>
+<button onclick="stopRecording()">Stop</button>
+
+<br><br>
+
+<p><b>📝 Transcript:</b> <span id="transcript"></span></p>
+<p><b>🌍 Language:</b> <span id="language"></span></p>
+<p><b>💬 System Response:</b> <span id="response"></span></p>
+
+<script>
+let mediaRecorder;
+let audioChunks = [];
+
+async function startRecording() {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    mediaRecorder = new MediaRecorder(stream);
+
+    audioChunks = [];
+
+    mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+
+    mediaRecorder.onstop = async () => {
+        const blob = new Blob(audioChunks, { type: "audio/webm" });
+
+        const formData = new FormData();
+        formData.append("file", blob, "voice.webm");
+
+        const res = await fetch("http://127.0.0.1:8000/voice-command", {
+            method: "POST",
+            body: formData
+        });
+
+        const data = await res.json();
+
+        document.getElementById("transcript").innerText = data.original_text;
+        document.getElementById("language").innerText = data.language;
+        document.getElementById("response").innerText = data.translated_text;
+    };
+
+    mediaRecorder.start();
+}
+
+function stopRecording() {
+    mediaRecorder.stop();
+}
+</script>
+
+</body>
+</html>
