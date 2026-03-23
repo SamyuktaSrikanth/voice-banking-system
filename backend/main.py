@@ -54,7 +54,7 @@ async def process_voice(file: UploadFile = File(...)):
         user_id = 1
 
         # basic check 
-        if not parsed["amount"] or not parsed["receiver"]:
+        if parsed.get("amount") is None or parsed.get("receiver") is None:
             db.close()
             return {"error": "Incomplete transaction details"}
 
@@ -68,7 +68,7 @@ async def process_voice(file: UploadFile = File(...)):
 
         if not valid:
             db.close()
-            return {"error": message}
+            return {"error": result}
         
         receiver = result
 
@@ -84,7 +84,7 @@ async def process_voice(file: UploadFile = File(...)):
             "translated_text": translated,
             "intent": parsed["intent"],
             "amount": parsed["amount"],
-            "receiver": masked_id,
+            "receiver": receiver.customer_id,
             "status": "valid"
         }
 
@@ -176,7 +176,7 @@ async def login(
 
 class ConfirmRequest(BaseModel):
     user_id: int
-    receiver: str
+    receiver_id: str
     amount: int
 
     
@@ -186,8 +186,16 @@ def confirm_transaction(req: ConfirmRequest):
     db = SessionLocal()
 
     sender = db.query(User).filter(User.id == req.user_id).first()
-    receiver_user = db.query(User).filter(User.customer_id == req.receiver).first()
+    receiver_user = db.query(User).filter(User.customer_id == req.receiver_id).first()
 
+    if not sender or not receiver_user:
+        db.close()
+        return {"error": "Invalid sender or receiver"}
+    
+    if req.amount <= 0:
+        db.close()
+        return {"error": "Invalid amount"}
+    
     success = execute_transaction(db, sender, receiver_user, req.amount)
 
     db.close()
