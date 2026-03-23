@@ -56,6 +56,17 @@ async function startRecording() {
 
             return;
         }
+        if (data.confirm) {
+            const userConfirm = confirm(data.message);
+
+            if (!userConfirm) {
+                alert("Transaction cancelled");
+                return;
+            }
+
+            // For now → just confirmation (execution later)
+            alert("Confirmed (execution step coming next)");
+        }
 
         document.getElementById("transcript").innerText = data.original_text;
         document.getElementById("language").innerText = data.language;
