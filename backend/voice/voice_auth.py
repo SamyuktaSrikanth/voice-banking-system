@@ -21,7 +21,7 @@ def get_embedding(audio_path):
     return embedding
 
 # Compare embeddings
-def compare_embeddings(emb1, emb2, threshold=0.75):
+def compare_embeddings(emb1, emb2, threshold=0.5):
     similarity = 1 - cosine(emb1, emb2)
     return similarity > threshold, similarity
 

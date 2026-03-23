@@ -3,10 +3,10 @@
 <head>
     <title>Signup</title>
     <script>
+document.addEventListener("DOMContentLoaded", function() {
 
 let mediaRecorder;
 let audioChunks = [];
-document.getElementById("status").innerText = "Recording...";
 
 function toggleVoiceUpload(checkbox) {
     const voiceSection = document.getElementById("voiceSection");
@@ -21,36 +21,44 @@ function toggleVoiceUpload(checkbox) {
     }
 }
 
-        async function startRecording() {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            mediaRecorder = new MediaRecorder(stream);
+window.toggleVoiceUpload = toggleVoiceUpload;
 
-            audioChunks = [];
+async function startRecording() {
+    
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    
+    mediaRecorder = new MediaRecorder(stream);
 
-            mediaRecorder.ondataavailable = event => {
-                audioChunks.push(event.data);
-            };
+    audioChunks = [];
+    
+    mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+    
+    mediaRecorder.onstop = () => {
+        const blob = new Blob(audioChunks, { type: "audio/webm" });
 
-            mediaRecorder.onstop = () => {
-                const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
+        const file = new File([blob], "voice.webm");
+        const dt = new DataTransfer();
+        dt.items.add(file);
 
-                const fileInput = document.getElementById("audioFile");
-                const file = new File([audioBlob], "voice.webm");
+        document.getElementById("audioFile").files = dt.files;
+    };
+    
 
-                const container = new DataTransfer();
-                container.items.add(file);
-                fileInput.files = container.files;
-            };
+    mediaRecorder.start();
+    
+    
+}
 
-            mediaRecorder.start();
-        }
+function stopRecording() {
+    mediaRecorder.stop();
+    mediaRecorder.stream.getTracks().forEach(t => t.stop());
+}
 
-        function stopRecording() {
-            mediaRecorder.stop();
-            mediaRecorder.stream.getTracks().forEach(track => track.stop());
-        }
+window.startRecording = startRecording;
+window.stopRecording = stopRecording;
 
-        document.getElementById("signupForm").addEventListener("submit", async function(e) {
+// ✅ FIXED SUBMIT HANDLER
+document.getElementById("signupForm").addEventListener("submit", async function(e) {
     e.preventDefault();
 
     const formData = new FormData(this);
@@ -64,10 +72,12 @@ function toggleVoiceUpload(checkbox) {
 
     if (res.ok) {
         alert("Signup successful!");
-        window.location.href = "login.html";  // ✅ redirect to login
+        window.location.href =  "file:///D:/6thSemester/voice-banking-system/frontend/dashboard.html";
     } else {
         alert(data.detail);
     }
+});
+
 });
 </script>
 </head>
@@ -75,7 +85,7 @@ function toggleVoiceUpload(checkbox) {
 
 <h2>Create Account</h2>
 
-<form action="http://127.0.0.1:8000/signup" id="signupForm" method="post" enctype="multipart/form-data">
+<form id="signupForm">
 
     <label>Customer ID:</label><br>
     <input type="text" name="customer_id" required><br><br>

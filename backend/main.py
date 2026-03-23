@@ -11,9 +11,18 @@ from fastapi import UploadFile, File
 from voice.stt import speech_to_text
 from translation.translate import translate_to_english
 
+from fastapi.middleware.cors import CORSMiddleware
+
 
 app = FastAPI()
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # for now (dev)
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.post("/voice-command")
 async def process_voice(file: UploadFile = File(...)):

@@ -3,9 +3,10 @@
 <head>
     <title>Login</title>
     <script>
+document.addEventListener("DOMContentLoaded", function() {
+
 let mediaRecorder;
 let audioChunks = [];
-document.getElementById("status").innerText = "Recording...";
 
 function toggleVoiceUpload(checkbox) {
     const voiceSection = document.getElementById("voiceSection");
@@ -20,25 +21,24 @@ function toggleVoiceUpload(checkbox) {
     }
 }
 
+window.toggleVoiceUpload = toggleVoiceUpload; // expose to HTML
+
 async function startRecording() {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     mediaRecorder = new MediaRecorder(stream);
 
     audioChunks = [];
 
-    mediaRecorder.ondataavailable = event => {
-        audioChunks.push(event.data);
-    };
+    mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
 
     mediaRecorder.onstop = () => {
-        const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
+        const blob = new Blob(audioChunks, { type: "audio/webm" });
 
-        const fileInput = document.getElementById("audioFile");
-        const file = new File([audioBlob], "voice.webm");
+        const file = new File([blob], "voice.webm");
+        const dt = new DataTransfer();
+        dt.items.add(file);
 
-        const container = new DataTransfer();
-        container.items.add(file);
-        fileInput.files = container.files;
+        document.getElementById("audioFile").files = dt.files;
     };
 
     mediaRecorder.start();
@@ -46,26 +46,37 @@ async function startRecording() {
 
 function stopRecording() {
     mediaRecorder.stop();
-    mediaRecorder.stream.getTracks().forEach(track => track.stop());
+    mediaRecorder.stream.getTracks().forEach(t => t.stop());
 }
 
+window.startRecording = startRecording;
+window.stopRecording = stopRecording;
+
+// ✅ THIS NOW WORKS
 document.getElementById("loginForm").addEventListener("submit", async function(e) {
     e.preventDefault();
 
     const formData = new FormData(this);
-
+    alert("1");
     const res = await fetch("http://127.0.0.1:8000/login", {
         method: "POST",
         body: formData
     });
 
+    alert("2");
     const data = await res.json();
 
+    alert("3");
+
     if (res.ok) {
-        window.location.href = "dashboard.html";  // ✅ HERE
+        alert("OK");
+        window.location.href =   "file:///D:/6thSemester/voice-banking-system/frontend/dashboard.html";
     } else {
+        alert("NOT OK");
         alert(data.detail);
     }
+});
+
 });
 </script>
 </head>
@@ -73,7 +84,7 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
 
 <h2>Login</h2>
 
-<form action="http://127.0.0.1:8000/login" method="post" enctype="multipart/form-data" id="loginForm">
+<form id="loginForm">
 
     <label>Customer ID:</label><br>
     <input type="text" name="customer_id" required><br><br>
