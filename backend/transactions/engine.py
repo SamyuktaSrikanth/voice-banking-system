@@ -32,3 +32,7 @@ def execute_transaction(db, sender, receiver, amount):
     except:
         db.rollback()
         return False
+    
+
+def mask_customer_id(customer_id):
+    return "***" + customer_id[-3:]
