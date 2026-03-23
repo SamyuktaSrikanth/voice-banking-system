@@ -5,7 +5,7 @@ def validate_transaction(db, sender_id, receiver_name, amount):
     if amount is None or amount <= 0:
         return False, "Invalid amount"
 
-    receiver = db.query(User).filter(User.customer_id == receiver_name).first()
+    receiver = db.query(User).filter(User.first_name.ilike(receiver_name)).first()
     if not receiver:
         return False, "Receiver not found"
 
