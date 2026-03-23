@@ -21,6 +21,7 @@
 <p><b>💰 Amount:</b> <span id="amount"></span></p>
 <p><b>👤 Receiver:</b> <span id="receiver"></span></p>
 
+<p><b>🏦 Balance:</b> <span id="balance"></span></p>
 
 <script>
 let mediaRecorder;
@@ -96,8 +97,10 @@ async function startRecording() {
         document.getElementById("response").innerText = data.translated_text;
 
         document.getElementById("intent").innerText = data.intent;
-        document.getElementById("amount").innerText = data.amount;
-        document.getElementById("receiver").innerText = data.receiver;
+        document.getElementById("amount").innerText = data.amount|| "";
+        document.getElementById("receiver").innerText = data.receiver || "";
+
+        document.getElementById("balance").innerText = data.balance || "";
     };
 
     mediaRecorder.start();
