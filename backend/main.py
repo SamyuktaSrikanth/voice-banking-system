@@ -68,6 +68,8 @@ async def process_voice(file: UploadFile = File(...)):
             return {"error": message}
 
         return {
+            "confirm": True,
+            "message": f"Do you want to transfer {parsed['amount']} rupees to {parsed['receiver']}?",
             "original_text": text,
             "language": language,
             "translated_text": translated,

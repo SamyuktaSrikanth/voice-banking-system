@@ -46,6 +46,16 @@ async function startRecording() {
         });
 
         const data = await res.json();
+        if (data.error) {
+            alert(data.error);
+
+            // Clear old values (important)
+            document.getElementById("intent").innerText = "";
+            document.getElementById("amount").innerText = "";
+            document.getElementById("receiver").innerText = "";
+
+            return;
+        }
 
         document.getElementById("transcript").innerText = data.original_text;
         document.getElementById("language").innerText = data.language;
