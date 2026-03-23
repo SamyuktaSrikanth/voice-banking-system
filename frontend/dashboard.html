@@ -2,8 +2,10 @@
 <html>
 <head>
     <title>Voice Banking Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+<div class="dashboard">
 
 <h2>🎤 Voice Banking Dashboard</h2>
 
@@ -11,7 +13,7 @@
 <button onclick="stopRecording()">Stop</button>
 
 <br><br>
-
+<div class="result">
 <p><b>📝 Transcript:</b> <span id="transcript"></span></p>
 <p><b>🌍 Language:</b> <span id="language"></span></p>
 <p><b>💬 System Response:</b> <span id="response"></span></p>
@@ -22,7 +24,7 @@
 <p><b>👤 Receiver:</b> <span id="receiver"></span></p>
 
 <p><b>🏦 Balance:</b> <span id="balance"></span></p>
-
+</div>
 <script>
 let mediaRecorder;
 let audioChunks = [];
@@ -110,6 +112,6 @@ function stopRecording() {
     mediaRecorder.stop();
 }
 </script>
-
+</div>
 </body>
 </html>
