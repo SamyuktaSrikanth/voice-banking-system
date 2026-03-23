@@ -13,7 +13,10 @@ from translation.translate import translate_to_english
 
 from fastapi.middleware.cors import CORSMiddleware
 from nlp.intent_parser import parse_command
+
 from transactions.engine import validate_transaction
+from pydantic import BaseModel
+from transactions.engine import execute_transaction
 
 
 app = FastAPI()
@@ -158,3 +161,27 @@ async def login(
         db.close()
 
     return {"status": "success", "message": "Login successful"}
+
+
+class ConfirmRequest(BaseModel):
+    user_id: int
+    receiver: str
+    amount: int
+
+    
+@app.post("/confirm-transaction")
+def confirm_transaction(req: ConfirmRequest):
+
+    db = SessionLocal()
+
+    sender = db.query(User).filter(User.id == req.user_id).first()
+    receiver_user = db.query(User).filter(User.customer_id == req.receiver).first()
+
+    success = execute_transaction(db, sender, receiver_user, req.amount)
+
+    db.close()
+
+    if success:
+        return {"message": "Transaction successful"}
+    else:
+        return {"error": "Transaction failed"}
