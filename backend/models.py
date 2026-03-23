@@ -11,4 +11,8 @@ class User(Base):
     password_hash = Column(String)
     voice_embedding = Column(LargeBinary)
     balance = Column(Integer,default=5000)
+
+    first_name = Column(String)
+    last_name = Column(String)
+    
     
