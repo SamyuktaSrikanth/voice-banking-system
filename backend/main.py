@@ -171,7 +171,11 @@ async def login(
     finally:
         db.close()
 
-    return {"status": "success", "message": "Login successful"}
+    return {
+        "status": "success",
+        "message": "Login successful",
+        "user_id": user.id
+        }
 
 
 class ConfirmRequest(BaseModel):
