@@ -64,9 +64,31 @@ async function startRecording() {
                 return;
             }
 
-            // For now → just confirmation (execution later)
-            alert("Confirmed (execution step coming next)");
+            
+            alert("Confirmed !");
+            
+            const res2 = await fetch("http://127.0.0.1:8000/confirm-transaction", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    user_id: 1,  // TEMP
+                    receiver: data.receiver,
+                    amount: data.amount
+                })
+            });
+
+            const result = await res2.json();
+
+            if (result.message) {
+                alert(result.message);
+            } else {
+                alert(result.error);
+            }
         }
+
+        
 
         document.getElementById("transcript").innerText = data.original_text;
         document.getElementById("language").innerText = data.language;
