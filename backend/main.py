@@ -30,7 +30,7 @@ app.add_middleware(
 )
 
 @app.post("/voice-command")
-async def process_voice(file: UploadFile = File(...)):
+async def process_voice(file: UploadFile = File(...),user_id: int = Form(...)):
     
     # Save file
     file_path = "temp_command.wav"
@@ -49,9 +49,6 @@ async def process_voice(file: UploadFile = File(...)):
     db = SessionLocal()
 
     if parsed["intent"] == "TRANSFER_MONEY":
-
-        # TEMP user_id
-        user_id = 1
 
         # basic check 
         if parsed.get("amount") is None or parsed.get("receiver") is None:
