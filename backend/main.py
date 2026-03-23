@@ -18,6 +18,8 @@ from transactions.engine import validate_transaction
 from pydantic import BaseModel
 from transactions.engine import execute_transaction
 
+from voice.voice_auth import bytes_to_embedding
+
 
 app = FastAPI()
 
