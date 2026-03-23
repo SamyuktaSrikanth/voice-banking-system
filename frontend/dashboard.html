@@ -16,6 +16,12 @@
 <p><b>🌍 Language:</b> <span id="language"></span></p>
 <p><b>💬 System Response:</b> <span id="response"></span></p>
 
+
+<p><b>🧠 Intent:</b> <span id="intent"></span></p>
+<p><b>💰 Amount:</b> <span id="amount"></span></p>
+<p><b>👤 Receiver:</b> <span id="receiver"></span></p>
+
+
 <script>
 let mediaRecorder;
 let audioChunks = [];
@@ -44,6 +50,10 @@ async function startRecording() {
         document.getElementById("transcript").innerText = data.original_text;
         document.getElementById("language").innerText = data.language;
         document.getElementById("response").innerText = data.translated_text;
+
+        document.getElementById("intent").innerText = data.intent;
+        document.getElementById("amount").innerText = data.amount;
+        document.getElementById("receiver").innerText = data.receiver;
     };
 
     mediaRecorder.start();

@@ -12,6 +12,7 @@ from voice.stt import speech_to_text
 from translation.translate import translate_to_english
 
 from fastapi.middleware.cors import CORSMiddleware
+from nlp.intent_parser import parse_command
 
 
 app = FastAPI()
@@ -38,11 +39,15 @@ async def process_voice(file: UploadFile = File(...)):
     # STEP 2: Translation
     translated = translate_to_english(text)
 
+     # STEP 3: NLP LAYER
+    parsed = parse_command(translated)
+
     return {
         "original_text": text,
-        "language": language,
         "translated_text": translated,
-        "response": "Processed successfully"
+        "intent": parsed["intent"],
+        "amount": parsed["amount"],
+        "receiver": parsed["receiver"]
     }
 
 @app.post("/signup")
