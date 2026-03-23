@@ -21,3 +21,14 @@ def validate_transaction(db, sender_id, receiver_name, amount):
         return False, "Insufficient balance"
 
     return True, "Valid transaction"
+
+def execute_transaction(db, sender, receiver, amount):
+    try:
+        sender.balance -= amount
+        receiver.balance += amount
+
+        db.commit()
+        return True
+    except:
+        db.rollback()
+        return False
