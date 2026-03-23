@@ -66,6 +66,7 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
 
 
     if (res.ok) {
+        localStorage.setItem("user_id", data.user_id);
         window.location.href =   "file:///D:/6thSemester/voice-banking-system/frontend/dashboard.html";
     } else {
         alert(data.detail);
