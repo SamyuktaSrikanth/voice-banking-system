@@ -89,7 +89,9 @@ async def process_voice(file: UploadFile = File(...)):
 async def signup(
     customer_id: str = Form(...),
     password: str = Form(...),
-    file: UploadFile = File(...)
+    file: UploadFile = File(...),
+    first_name: str = Form(...),
+    last_name: str = Form(...)
 ):
     db = SessionLocal()
 
@@ -114,7 +116,10 @@ async def signup(
         new_user = User(
             customer_id=customer_id,
             password_hash=hashed_password,
-            voice_embedding=embedding_bytes
+            voice_embedding=embedding_bytes,
+            first_name=first_name,
+            last_name=last_name
+
         )
 
         db.add(new_user)
