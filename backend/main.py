@@ -130,8 +130,12 @@ async def signup(
 
     finally:
         db.close()
+    
 
-    return {"status": "success", "message": "User created"}
+    return {
+        "status": "success",
+        "message": "User Created"
+    }
 
 @app.post("/login")
 async def login(

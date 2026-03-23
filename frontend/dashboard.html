@@ -74,7 +74,7 @@ async function startRecording() {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
-                    user_id: 1,  // TEMP
+                    user_id: localStorage.getItem("user_id"),  
                     receiver_id: data.receiver, //customerID
                     amount: data.amount
                 })
