@@ -48,9 +48,31 @@ async def process_voice(file: UploadFile = File(...),user_id: int = Form(...)):
      # STEP 3: NLP LAYER
     parsed = parse_command(translated)
 
-    db = SessionLocal()
+    if parsed["intent"] == "CHECK_BALANCE":
+
+        db = SessionLocal()
+
+        user = db.query(User).filter(User.id == user_id).first()
+
+        if not user:
+            db.close()
+            return {"error": "User not found"}
+
+        balance = user.balance
+
+        db.close()
+
+        return {
+            "original_text": text,
+            "translated_text": translated,
+            "intent": parsed["intent"],
+            "balance": balance,
+            "message": f"Your current balance is {balance} rupees"
+        }
 
     if parsed["intent"] == "TRANSFER_MONEY":
+
+        db = SessionLocal()
 
         # basic check 
         if parsed.get("amount") is None or parsed.get("receiver") is None:
