@@ -5,6 +5,9 @@ from pydub import AudioSegment
 
 from security.encryption import encrypt_data, decrypt_data
 
+import numpy as np
+
+
 encoder = VoiceEncoder()
 
 # Convert audio → embedding
@@ -34,5 +37,6 @@ def embedding_to_bytes(embedding):
     return encrypted
 
 # Convert bytes → embedding
-def bytes_to_embedding(byte_data):
-    return np.frombuffer(byte_data, dtype=np.float32)
+def bytes_to_embedding(encrypted_bytes):
+    decrypted = decrypt_data(encrypted_bytes)
+    return np.frombuffer(decrypted, dtype=np.float32)
