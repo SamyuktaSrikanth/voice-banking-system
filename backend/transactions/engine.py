@@ -20,7 +20,7 @@ def validate_transaction(db, sender_id, receiver_name, amount):
     if sender.balance < amount:
         return False, "Insufficient balance"
 
-    return True, "Valid transaction"
+    return True, receiver
 
 def execute_transaction(db, sender, receiver, amount):
     try:

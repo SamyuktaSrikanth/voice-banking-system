@@ -69,6 +69,8 @@ async def process_voice(file: UploadFile = File(...)):
 
         if not valid:
             return {"error": message}
+        
+        
 
         return {
             "confirm": True,
