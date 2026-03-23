@@ -57,22 +57,17 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
     e.preventDefault();
 
     const formData = new FormData(this);
-    alert("1");
     const res = await fetch("http://127.0.0.1:8000/login", {
         method: "POST",
         body: formData
     });
 
-    alert("2");
     const data = await res.json();
 
-    alert("3");
 
     if (res.ok) {
-        alert("OK");
         window.location.href =   "file:///D:/6thSemester/voice-banking-system/frontend/dashboard.html";
     } else {
-        alert("NOT OK");
         alert(data.detail);
     }
 });
