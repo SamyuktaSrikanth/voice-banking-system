@@ -42,8 +42,13 @@ async def process_voice(file: UploadFile = File(...)):
      # STEP 3: NLP LAYER
     parsed = parse_command(translated)
 
+    if parsed["intent"] == "TRANSFER_MONEY":
+        if not parsed["amount"] or not parsed["receiver"]:
+            return {"error": "Incomplete transaction details"}
+
     return {
         "original_text": text,
+        "language": language,
         "translated_text": translated,
         "intent": parsed["intent"],
         "amount": parsed["amount"],

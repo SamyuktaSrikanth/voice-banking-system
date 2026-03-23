@@ -5,6 +5,7 @@ nlp = spacy.load("en_core_web_sm")
 
 # 🔹 Preprocessing
 def preprocess(text):
+    text = text.replace("send out", "send")
     text = text.lower()
     text = text.replace("rupees", "").replace("rs", "")
     return text.strip()
@@ -22,8 +23,9 @@ def detect_intent(text):
 
 # 🔹 Extract Amount
 def extract_amount(text):
-    match = re.search(r"\d+", text)
-    return int(match.group()) if match else None
+    match = re.search(r"\d+(?:,\d+)*", text)
+    if match:
+        return int(match.group().replace(",", ""))
 
 # 🔹 Extract Receiver
 def extract_receiver(doc):
