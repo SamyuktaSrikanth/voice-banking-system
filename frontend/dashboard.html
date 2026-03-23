@@ -39,6 +39,7 @@ async function startRecording() {
 
         const formData = new FormData();
         formData.append("file", blob, "voice.webm");
+        formData.append("user_id", localStorage.getItem("user_id"));
 
         const res = await fetch("http://127.0.0.1:8000/voice-command", {
             method: "POST",
