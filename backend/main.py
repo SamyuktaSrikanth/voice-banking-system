@@ -13,6 +13,7 @@ from translation.translate import translate_to_english
 
 from fastapi.middleware.cors import CORSMiddleware
 from nlp.intent_parser import parse_command
+from transactions.engine import validate_transaction
 
 
 app = FastAPI()
@@ -42,18 +43,42 @@ async def process_voice(file: UploadFile = File(...)):
      # STEP 3: NLP LAYER
     parsed = parse_command(translated)
 
+    db = SessionLocal()
+
     if parsed["intent"] == "TRANSFER_MONEY":
+
+        # TEMP user_id
+        user_id = 1
+
+        # basic check 
         if not parsed["amount"] or not parsed["receiver"]:
+            db.close()
             return {"error": "Incomplete transaction details"}
 
-    return {
-        "original_text": text,
-        "language": language,
-        "translated_text": translated,
-        "intent": parsed["intent"],
-        "amount": parsed["amount"],
-        "receiver": parsed["receiver"]
-    }
+        valid, message = validate_transaction(
+            db,
+            user_id,
+            parsed["receiver"],
+            parsed["amount"]
+        )
+
+        db.close()
+
+        if not valid:
+            return {"error": message}
+
+        return {
+            "original_text": text,
+            "language": language,
+            "translated_text": translated,
+            "intent": parsed["intent"],
+            "amount": parsed["amount"],
+            "receiver": parsed["receiver"],
+            "status": "valid"
+        }
+
+
+    
 
 @app.post("/signup")
 async def signup(
