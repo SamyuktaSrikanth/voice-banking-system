@@ -74,7 +74,7 @@ async function startRecording() {
                 },
                 body: JSON.stringify({
                     user_id: 1,  // TEMP
-                    receiver: data.receiver,
+                    receiver_id: data.receiver, //customerID
                     amount: data.amount
                 })
             });

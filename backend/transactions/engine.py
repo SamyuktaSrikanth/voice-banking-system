@@ -14,7 +14,7 @@ def validate_transaction(db, sender_id, receiver_name, amount):
     if not sender:
         return False, "Sender not found"
 
-    if sender.customer_id == receiver_name:
+    if sender.id == receiver.id:
         return False, "Cannot transfer to self"
 
     if sender.balance < amount:
