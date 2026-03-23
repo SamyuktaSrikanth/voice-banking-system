@@ -3,6 +3,8 @@ from resemblyzer import VoiceEncoder, preprocess_wav
 from scipy.spatial.distance import cosine
 from pydub import AudioSegment
 
+from security.encryption import encrypt_data, decrypt_data
+
 encoder = VoiceEncoder()
 
 # Convert audio → embedding
@@ -27,7 +29,9 @@ def compare_embeddings(emb1, emb2, threshold=0.75):
 
 # Convert embedding → bytes (store in DB)
 def embedding_to_bytes(embedding):
-    return embedding.tobytes()
+    raw_bytes = embedding.tobytes()
+    encrypted = encrypt_data(raw_bytes)
+    return encrypted
 
 # Convert bytes → embedding
 def bytes_to_embedding(byte_data):
