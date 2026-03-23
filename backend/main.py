@@ -58,29 +58,33 @@ async def process_voice(file: UploadFile = File(...)):
             db.close()
             return {"error": "Incomplete transaction details"}
 
-        valid, message = validate_transaction(
+        valid, result = validate_transaction(
             db,
             user_id,
             parsed["receiver"],
             parsed["amount"]
         )
 
-        db.close()
 
         if not valid:
+            db.close()
             return {"error": message}
         
-        
+        receiver = result
+
+        masked_id = "***" + receiver.customer_id[-3:]
+
+        db.close()
 
         return {
             "confirm": True,
-            "message": f"Do you want to transfer {parsed['amount']} rupees to {parsed['receiver']}?",
+            "message": f"Do you want to transfer {parsed['amount']} rupees to {receiver.first_name} ({masked_id})?",
             "original_text": text,
             "language": language,
             "translated_text": translated,
             "intent": parsed["intent"],
             "amount": parsed["amount"],
-            "receiver": parsed["receiver"],
+            "receiver": masked_id,
             "status": "valid"
         }
 
